@@ -1,3 +1,6 @@
+import 'package:comp3330_project/constants/sample_data.dart';
+import 'package:comp3330_project/widgets/info_card.dart';
+import 'package:comp3330_project/widgets/main_page_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,13 +17,6 @@ class _HomePageState extends State<HomePage>
     "Study Spaces",
     "Fitness & Sports",
   ];
-
-  // Sample data for the ListView, categorized based on the tab filters
-  final Map<String, List<String>> listItems = {
-    "Dietary": ["Cafeteria", "Vegan Options", "Salad Bar"],
-    "Study Spaces": ["Library", "Study Room 101", "Silent Study Area"],
-    "Fitness & Sports": ["Gym", "Swimming Pool", "Tennis Court"],
-  };
 
   late TabController _tabController;
   String selectedTab = "Dietary"; // State variable to track the current tab
@@ -49,9 +45,9 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("HKU Main Campus Capacity Tracker"),
-        backgroundColor: Colors.white,
+      appBar: MainPageAppBar(
+        onHeartPressed: () {},
+        onBellPressed: () {},
       ),
       body: Column(
         children: [
@@ -81,12 +77,19 @@ class _HomePageState extends State<HomePage>
                   child: TabBarView(
                     controller: _tabController,
                     children: tabLabels.map((label) {
-                      // Create a ListView for each tab with filtered items
                       return ListView.builder(
                         itemCount: listItems[label]!.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(listItems[label]![index]),
+                          var item = listItems[label]![index];
+
+                          return InfoCard(
+                            title: item['title'],
+                            location: item['location'] ?? 'Unknown',
+                            description: item['description'],
+                            occupancy: item['occupancy'],
+                            capacity: item['capacity'],
+                            type: item['type'],
+                            bookingLink: item['bookingLink'],
                           );
                         },
                       );
