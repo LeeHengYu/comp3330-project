@@ -2,11 +2,12 @@ import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:comp3330_project/models/facility_category.dart';
 import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
-import 'package:comp3330_project/widgets/google_maps.dart';
+import 'package:comp3330_project/widgets/google_maps.dart'; // Import the GoogleMaps widget from its folder
 import 'package:comp3330_project/widgets/info_card.dart';
 import 'package:comp3330_project/widgets/main_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,10 +25,14 @@ class _HomePageState extends State<HomePage>
   ];
 
   late TabController _tabController;
+  final ItemScrollController _itemScrollController = ItemScrollController();
+
+  bool isProgrammaticScroll = false;
 
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: tabLabels.length, vsync: this);
 
     _tabController.addListener(() {
@@ -48,12 +53,53 @@ class _HomePageState extends State<HomePage>
         }
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedFacilityProvider =
+          Provider.of<SelectedFacilityProvider>(context, listen: false);
+
+      selectedFacilityProvider.addListener(() {
+        if (isProgrammaticScroll) {
+          final facilityId = selectedFacilityProvider.selectedFacility;
+          if (facilityId != null) {
+            final selectedCategoryProvider =
+                Provider.of<SelectedCategoryProvider>(context, listen: false);
+            FacilityType selectedCategory =
+                selectedCategoryProvider.selectedCategory;
+
+            var filteredFacilities = facilities.where((facility) {
+              return facility.category == selectedCategory;
+            }).toList();
+
+            _scrollToSelectedFacility(facilityId, filteredFacilities);
+          }
+          isProgrammaticScroll = false; // Reset flag after scrolling
+        }
+      });
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _scrollToSelectedFacility(
+    String facilityId,
+    List<Facility> filteredFacilities,
+  ) {
+    final selectedFacilityIndex =
+        filteredFacilities.indexWhere((facility) => facility.id == facilityId);
+
+    if (selectedFacilityIndex != -1) {
+      if (_itemScrollController.isAttached) {
+        _itemScrollController.scrollTo(
+          index: selectedFacilityIndex,
+          duration: const Duration(milliseconds: 200),
+        );
+      }
+    }
   }
 
   @override
@@ -65,10 +111,13 @@ class _HomePageState extends State<HomePage>
         Provider.of<SelectedCategoryProvider>(context);
     FacilityType selectedCategory = selectedCategoryProvider.selectedCategory;
 
+    var filteredFacilities = facilities.where((facility) {
+      return facility.category == selectedCategory;
+    }).toList();
+
     return Scaffold(
       appBar: MainPageAppBar(
-        title: selectedFacilityProvider.selectedFacility ??
-            "Main Campus Capacity Tracker",
+        title: "Main Campus Capacity Tracker",
         onHeartPressed: () {}, // TODO: to be implemented
         onBellPressed: () {}, // TODO: to be implemented
       ),
@@ -76,9 +125,15 @@ class _HomePageState extends State<HomePage>
         color: Colors.white,
         child: Column(
           children: [
-            const SizedBox(
+            SizedBox(
               height: 300,
-              child: GoogleMaps(),
+              child: GoogleMaps(
+                onMarkerTap: () {
+                  setState(() {
+                    isProgrammaticScroll = true;
+                  });
+                },
+              ),
             ),
             Expanded(
               child: Column(
@@ -96,36 +151,29 @@ class _HomePageState extends State<HomePage>
                     }).toList(),
                   ),
                   Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: tabLabels.map((label) {
-                        var filteredFacilities = facilities.where((facility) {
-                          return facility.category == selectedCategory;
-                        }).toList();
+                    child: ScrollablePositionedList.builder(
+                      itemCount: filteredFacilities.length,
+                      itemScrollController: _itemScrollController,
+                      itemBuilder: (context, index) {
+                        var item = filteredFacilities[index];
 
-                        return ListView.builder(
-                          itemCount: filteredFacilities.length,
-                          itemBuilder: (context, index) {
-                            var item = filteredFacilities[index];
-
-                            return GestureDetector(
-                              onTap: () {
-                                selectedFacilityProvider
-                                    .setSelectedFacility(item.id);
-                              },
-                              child: InfoCard(
-                                title: item.name,
-                                location: item.location,
-                                description: item.description,
-                                occupancy: item.occupancy,
-                                capacity: item.capacity,
-                                type: item.category,
-                                bookingLink: item.bookingLink,
-                              ),
-                            );
+                        return GestureDetector(
+                          onTap: () {
+                            isProgrammaticScroll = false;
+                            selectedFacilityProvider
+                                .setSelectedFacility(item.id);
                           },
+                          child: InfoCard(
+                            title: item.name,
+                            location: item.location,
+                            description: item.description,
+                            occupancy: item.occupancy,
+                            capacity: item.capacity,
+                            type: item.category,
+                            bookingLink: item.bookingLink,
+                          ),
                         );
-                      }).toList(),
+                      },
                     ),
                   ),
                 ],

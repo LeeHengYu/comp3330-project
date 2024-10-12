@@ -107,3 +107,9 @@ List<Facility> facilities = [
     bookingLink: null,
   ),
 ];
+
+List<Facility> getFilteredList(FacilityType type) {
+  return facilities.where((facility) {
+    return facility.category == type;
+  }).toList();
+}
