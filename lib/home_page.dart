@@ -1,9 +1,11 @@
-import 'package:comp3330_project/models/facility_category.dart';
 import 'package:comp3330_project/constants/sample_data.dart';
+import 'package:comp3330_project/models/facility_category.dart';
+import 'package:comp3330_project/providers/selected_facility.dart';
 import 'package:comp3330_project/widgets/google_maps.dart';
 import 'package:comp3330_project/widgets/info_card.dart';
 import 'package:comp3330_project/widgets/main_page_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -59,7 +61,6 @@ class _HomePageState extends State<HomePage>
         selectedCategory = FacilityType.food;
     }
 
-    // Filter the facilities based on the selected category
     return facilities
         .where((facility) => facility.category == selectedCategory)
         .toList();
@@ -67,10 +68,13 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    final selectedFacilityProvider =
+        Provider.of<SelectedFacilityProvider>(context);
+
     return Scaffold(
       appBar: MainPageAppBar(
-        onHeartPressed: () {},
-        onBellPressed: () {},
+        onHeartPressed: () {}, // TODO: to be implemented
+        onBellPressed: () {}, // TODO: to be implemented
       ),
       body: Container(
         color: Colors.white,
@@ -99,7 +103,6 @@ class _HomePageState extends State<HomePage>
                     child: TabBarView(
                       controller: _tabController,
                       children: tabLabels.map((label) {
-                        // Get filtered facilities based on selected tab
                         var filteredFacilities = _getFacilitiesForSelectedTab();
 
                         return ListView.builder(
@@ -107,14 +110,20 @@ class _HomePageState extends State<HomePage>
                           itemBuilder: (context, index) {
                             var item = filteredFacilities[index];
 
-                            return InfoCard(
-                              title: item.name,
-                              location: item.location,
-                              description: item.description,
-                              occupancy: item.occupancy,
-                              capacity: item.capacity,
-                              type: item.category,
-                              bookingLink: item.bookingLink,
+                            return GestureDetector(
+                              onTap: () {
+                                selectedFacilityProvider
+                                    .setSelectedFacility(item.id);
+                              },
+                              child: InfoCard(
+                                title: item.name,
+                                location: item.location,
+                                description: item.description,
+                                occupancy: item.occupancy,
+                                capacity: item.capacity,
+                                type: item.category,
+                                bookingLink: item.bookingLink,
+                              ),
                             );
                           },
                         );

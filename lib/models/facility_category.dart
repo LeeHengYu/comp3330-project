@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 enum FacilityType { food, sports, study }
@@ -33,7 +35,7 @@ class Facility {
     }
   }
 
-  Marker toMarker() {
+  Marker toMarker({VoidCallback? onMarkerClick}) {
     return Marker(
       markerId: MarkerId(id),
       position: coordinates,
@@ -42,6 +44,7 @@ class Facility {
         snippet:
             'Category: ${category.toString().split('.').last}, Capacity: $capacity, Occupancy: $occupancy',
       ),
+      onTap: onMarkerClick,
     );
   }
 }
