@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 class MainPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onHeartPressed;
   final VoidCallback onBellPressed;
+  final String title;
 
   const MainPageAppBar({
     super.key,
+    required this.title,
     required this.onHeartPressed,
     required this.onBellPressed,
   });
@@ -16,9 +18,9 @@ class MainPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Text(
-        "Main Campus Capacity Tracker",
-        style: TextStyle(
+      title: Text(
+        title,
+        style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w500,
         ),

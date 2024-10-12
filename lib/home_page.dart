@@ -1,5 +1,6 @@
 import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:comp3330_project/models/facility_category.dart';
+import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
 import 'package:comp3330_project/widgets/google_maps.dart';
 import 'package:comp3330_project/widgets/info_card.dart';
@@ -23,7 +24,6 @@ class _HomePageState extends State<HomePage>
   ];
 
   late TabController _tabController;
-  String selectedTab = "Dietary";
 
   @override
   void initState() {
@@ -32,9 +32,20 @@ class _HomePageState extends State<HomePage>
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        setState(() {
-          selectedTab = tabLabels[_tabController.index];
-        });
+        final selectedCategoryProvider =
+            Provider.of<SelectedCategoryProvider>(context, listen: false);
+
+        switch (_tabController.index) {
+          case 0:
+            selectedCategoryProvider.setSelectedCategory(FacilityType.food);
+            break;
+          case 1:
+            selectedCategoryProvider.setSelectedCategory(FacilityType.study);
+            break;
+          case 2:
+            selectedCategoryProvider.setSelectedCategory(FacilityType.sports);
+            break;
+        }
       }
     });
   }
@@ -45,34 +56,19 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  List<Facility> _getFacilitiesForSelectedTab() {
-    FacilityType selectedCategory;
-    switch (selectedTab) {
-      case "Dietary":
-        selectedCategory = FacilityType.food;
-        break;
-      case "Study Spaces":
-        selectedCategory = FacilityType.study;
-        break;
-      case "Fitness & Sports":
-        selectedCategory = FacilityType.sports;
-        break;
-      default:
-        selectedCategory = FacilityType.food;
-    }
-
-    return facilities
-        .where((facility) => facility.category == selectedCategory)
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     final selectedFacilityProvider =
         Provider.of<SelectedFacilityProvider>(context);
 
+    final selectedCategoryProvider =
+        Provider.of<SelectedCategoryProvider>(context);
+    FacilityType selectedCategory = selectedCategoryProvider.selectedCategory;
+
     return Scaffold(
       appBar: MainPageAppBar(
+        title: selectedFacilityProvider.selectedFacility ??
+            "Main Campus Capacity Tracker",
         onHeartPressed: () {}, // TODO: to be implemented
         onBellPressed: () {}, // TODO: to be implemented
       ),
@@ -103,7 +99,9 @@ class _HomePageState extends State<HomePage>
                     child: TabBarView(
                       controller: _tabController,
                       children: tabLabels.map((label) {
-                        var filteredFacilities = _getFacilitiesForSelectedTab();
+                        var filteredFacilities = facilities.where((facility) {
+                          return facility.category == selectedCategory;
+                        }).toList();
 
                         return ListView.builder(
                           itemCount: filteredFacilities.length,

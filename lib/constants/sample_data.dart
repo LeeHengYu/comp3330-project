@@ -39,15 +39,15 @@ List<Facility> facilities = [
 
   // Study Spaces
   Facility(
-    id: "library",
-    name: "Library",
-    location: "Academic Building",
-    coordinates: const LatLng(22.282945, 114.158833),
-    description: "Silent study space with resources.",
+    id: "main_library",
+    name: "Main Library",
+    location: "Main Library",
+    coordinates: const LatLng(22.28324783261001, 114.13774371648039),
+    description: "Silent study space with resources and various seat options.",
     occupancy: 70,
-    capacity: 200,
+    capacity: 300,
     category: FacilityType.study,
-    bookingLink: "https://example.com/library-booking",
+    bookingLink: "https://lib.hku.hk/general/e-form/book-a-space.html",
   ),
   Facility(
     id: "study_room_101",
@@ -74,15 +74,15 @@ List<Facility> facilities = [
 
   // Fitness & Sports
   Facility(
-    id: "gym",
-    name: "Gym",
-    location: "Sports Complex",
-    coordinates: const LatLng(22.284112, 114.160300),
+    id: "b_active",
+    name: "B Active",
+    location: "Novum West 1/F",
+    coordinates: const LatLng(22.285679134588225, 114.13675602406839),
     description: "Fully equipped gym for fitness training.",
-    occupancy: 30,
-    capacity: 100,
+    occupancy: 78,
+    capacity: 80,
     category: FacilityType.sports,
-    bookingLink: "https://example.com/gym-booking",
+    bookingLink: "https://hkuportal.hku.hk/login.html",
   ),
   Facility(
     id: "swimming_pool",

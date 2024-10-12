@@ -41,8 +41,7 @@ class Facility {
       position: coordinates,
       infoWindow: InfoWindow(
         title: name,
-        snippet:
-            'Category: ${category.toString().split('.').last}, Capacity: $capacity, Occupancy: $occupancy',
+        snippet: '$location, Occupancy: $occupancy/$capacity',
       ),
       onTap: onMarkerClick,
     );
