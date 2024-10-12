@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:comp3330_project/models/facility_category.dart';
+import 'package:comp3330_project/providers/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class InfoCard extends StatelessWidget {
+class InfoCard extends StatefulWidget {
+  final String id;
   final String title;
   final String location;
   final String? description;
@@ -13,6 +16,7 @@ class InfoCard extends StatelessWidget {
 
   const InfoCard({
     super.key,
+    required this.id,
     required this.title,
     required this.location,
     this.description,
@@ -22,6 +26,11 @@ class InfoCard extends StatelessWidget {
     this.bookingLink,
   });
 
+  @override
+  State<InfoCard> createState() => _InfoCardState();
+}
+
+class _InfoCardState extends State<InfoCard> {
   Future<void> _launchBookingUrl(String url) async {
     final Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
@@ -34,7 +43,13 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double occupancyPercentage =
-        (occupancy != null && capacity > 0) ? (occupancy! / capacity) : 0.0;
+        (widget.occupancy != null && widget.capacity > 0)
+            ? (widget.occupancy! / widget.capacity)
+            : 0.0;
+
+    bool isLiked;
+    final sharedPrefProvider = Provider.of<SharedPreferencesProvider>(context);
+    isLiked = sharedPrefProvider.facilityIds.contains(widget.id);
 
     return Card(
       color: Colors.white,
@@ -46,24 +61,43 @@ class InfoCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: isLiked ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: () => setState(() {
+                    isLiked = !isLiked;
+                    if (isLiked) {
+                      sharedPrefProvider.addFacilityId(widget.id);
+                    } else {
+                      sharedPrefProvider.removeFacilityId(widget.id);
+                    }
+                  }),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             Text(
-              'Location: $location',
+              'Location: ${widget.location}',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            if (description != null)
+            if (widget.description != null)
               Text(
-                description!,
+                widget.description!,
                 style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
             const SizedBox(height: 4),
@@ -71,24 +105,24 @@ class InfoCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Occupancy: ${(occupancy == null) ? '--' : occupancy} / $capacity',
+                  'Occupancy: ${(widget.occupancy == null) ? '--' : widget.occupancy} / ${widget.capacity}',
                   style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 6),
                 LinearProgressIndicator(
-                  value: (occupancy != null) ? occupancyPercentage : 0,
+                  value: (widget.occupancy != null) ? occupancyPercentage : 0,
                   backgroundColor: Colors.grey[300],
                   color: Colors.blue,
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            if (bookingLink != null)
+            if (widget.bookingLink != null)
               Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
                   onTap: () {
-                    _launchBookingUrl(bookingLink!);
+                    _launchBookingUrl(widget.bookingLink!);
                   },
                   borderRadius: BorderRadius.circular(
                     8,

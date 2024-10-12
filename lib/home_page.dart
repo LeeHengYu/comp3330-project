@@ -2,7 +2,7 @@ import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:comp3330_project/models/facility_category.dart';
 import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
-import 'package:comp3330_project/widgets/google_maps.dart'; // Import the GoogleMaps widget from its folder
+import 'package:comp3330_project/widgets/google_maps.dart';
 import 'package:comp3330_project/widgets/info_card.dart';
 import 'package:comp3330_project/widgets/main_page_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +110,6 @@ class _HomePageState extends State<HomePage>
     final selectedCategoryProvider =
         Provider.of<SelectedCategoryProvider>(context);
     FacilityType selectedCategory = selectedCategoryProvider.selectedCategory;
-
     var filteredFacilities = facilities.where((facility) {
       return facility.category == selectedCategory;
     }).toList();
@@ -164,6 +163,7 @@ class _HomePageState extends State<HomePage>
                                 .setSelectedFacility(item.id);
                           },
                           child: InfoCard(
+                            id: item.id,
                             title: item.name,
                             location: item.location,
                             description: item.description,
