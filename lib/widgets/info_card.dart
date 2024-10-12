@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:comp3330_project/constants/facility_category.dart';
+import 'package:comp3330_project/models/facility_category.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class InfoCard extends StatelessWidget {
@@ -8,7 +8,7 @@ class InfoCard extends StatelessWidget {
   final String? description;
   final int? occupancy;
   final int capacity;
-  final Facility type;
+  final FacilityType type;
   final String? bookingLink;
 
   const InfoCard({
@@ -61,7 +61,6 @@ class InfoCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // const SizedBox(height: 4),
             if (description != null)
               Text(
                 description!,
