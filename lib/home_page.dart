@@ -1,4 +1,5 @@
 import 'package:comp3330_project/constants/sample_data.dart';
+import 'package:comp3330_project/favorite_page.dart';
 import 'package:comp3330_project/models/facility_category.dart';
 import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
@@ -117,7 +118,12 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: MainPageAppBar(
         title: "Main Campus Capacity Tracker",
-        onHeartPressed: () {}, // TODO: to be implemented
+        onHeartPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FavoritePage()),
+          );
+        },
         onBellPressed: () {}, // TODO: to be implemented
       ),
       body: Container(
