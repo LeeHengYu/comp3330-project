@@ -1,3 +1,4 @@
+import 'package:comp3330_project/alarm_setup_page.dart';
 import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:comp3330_project/favorite_page.dart';
 import 'package:comp3330_project/models/facility_category.dart';
@@ -124,7 +125,12 @@ class _HomePageState extends State<HomePage>
             MaterialPageRoute(builder: (context) => const FavoritePage()),
           );
         },
-        onBellPressed: () {}, // TODO: to be implemented
+        onBellPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AlarmSetupPage()),
+          );
+        },
       ),
       body: Container(
         color: Colors.white,
