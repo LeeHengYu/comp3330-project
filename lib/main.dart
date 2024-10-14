@@ -2,10 +2,20 @@ import 'package:comp3330_project/home_page.dart';
 import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
 import 'package:comp3330_project/providers/shared_preferences.dart';
+import 'package:comp3330_project/service/alarm_scheduler.dart';
+import 'package:comp3330_project/service/background_fetch_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
+
   runApp(
     MultiProvider(
       providers: [
@@ -23,6 +33,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sharedPrefProvider = Provider.of<SharedPreferencesProvider>(context);
+    final alarmScheduler = AlarmScheduler(flutterLocalNotificationsPlugin);
+
+    final bgFetcher = BackgroundFetchHandler(alarmScheduler, sharedPrefProvider)
+        .initBackgroundFetch(); // ignore error
+
     return const MaterialApp(
       title: 'HKU Main Campus Capacity Tracker',
       debugShowCheckedModeBanner: false,

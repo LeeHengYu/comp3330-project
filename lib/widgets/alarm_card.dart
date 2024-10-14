@@ -34,15 +34,12 @@ class _AlarmCardState extends State<AlarmCard> {
     final prefsProvider =
         Provider.of<SharedPreferencesProvider>(context, listen: false);
 
-    _startTime =
-        prefsProvider.getStartTime(widget.facilityId); // Corrected call
-    _endTime = prefsProvider.getEndTime(widget.facilityId); // Corrected call
+    _startTime = prefsProvider.getStartTime(widget.facilityId);
+    _endTime = prefsProvider.getEndTime(widget.facilityId);
     _selectedDays = prefsProvider.getAlarmDays(widget.facilityId);
 
     _isSettingAlarm =
         _startTime != null || _endTime != null || _selectedDays.isNotEmpty;
-
-    // setState(() {}); // force re-render
   }
 
   Future<void> _selectTime(BuildContext context, bool isStartTime) async {
