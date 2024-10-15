@@ -1,7 +1,7 @@
 ```mermaid
 classDiagram
-    note "Location and favorite have common id."
-    class Location {
+    note "Facility and Maps markers share common id."
+    class Facility {
         +int id
         +String name
         +String type
@@ -9,22 +9,37 @@ classDiagram
         +int occupied
         +Url bookingLink
 
-        +updateStatus(newOccupied)
+        +Marker toMapsMarker()
     }
 
-    class Favorite {
-        +int id
-        +Alert alert
-    }
-
-    note for Alert "time unit: seconds since midnight"
-    note for Alert "Weekdays encoding starting from Monday with 1"
     class Alert {
+        +String facilityId
         +List~int~ weekdays
         +int startTime
         +int endTime
     }
 
-    Favorite -- Location
-    Favorite *-- Alert
+    note for SharedPreferencesProvider "Manage favorite list"
+    class SharedPreferencesProvider {
+        +List~String~ facilityId
+        +TimeOfDay? getStartTime(String id)
+        +TimeOfDay? getEndTime(String id)
+        +List~String~ getAlarmDays(String id)
+    }
+
+    class AlarmScheduler {
+        + scheduleAlarm()
+    }
+
+    class BackgroundFetcher {
+        AlarmScheduler scheduler
+        SharedPreferencesProvider prefsProvider
+
+        + initBgFetch()
+    }
+
+    SharedPreferencesProvider .. Alert
+    SharedPreferencesProvider .. Facility
+    BackgroundFetcher *-- AlarmScheduler
+    BackgroundFetcher -- SharedPreferencesProvider
 ```
