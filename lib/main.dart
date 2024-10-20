@@ -1,4 +1,5 @@
 import 'package:comp3330_project/home_page.dart';
+import 'package:comp3330_project/providers/maps_filter.dart';
 import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
 import 'package:comp3330_project/providers/shared_preferences.dart';
@@ -19,8 +20,9 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => SelectedFacilityProvider()),
+        ChangeNotifierProvider(create: (_) => MapsDistanceProvider()),
         ChangeNotifierProvider(create: (_) => SelectedCategoryProvider()),
+        ChangeNotifierProvider(create: (_) => SelectedFacilityProvider()),
         ChangeNotifierProvider(create: (_) => SharedPreferencesProvider()),
       ],
       child: const MyApp(),

@@ -4,6 +4,7 @@ import 'package:comp3330_project/favorite_page.dart';
 import 'package:comp3330_project/models/facility_category.dart';
 import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
+import 'package:comp3330_project/widgets/filter_toggle_button.dart';
 import 'package:comp3330_project/widgets/google_maps.dart';
 import 'package:comp3330_project/widgets/info_card.dart';
 import 'package:comp3330_project/widgets/main_page_app_bar.dart';
@@ -145,6 +146,10 @@ class _HomePageState extends State<HomePage>
                   });
                 },
               ),
+            ),
+            const SizedBox(
+              width: double.infinity,
+              child: FilterToggleButton(),
             ),
             Expanded(
               child: Column(
