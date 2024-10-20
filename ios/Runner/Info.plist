@@ -33,17 +33,9 @@
 		<string>fetch</string>
 		<string>remote-nofification</string>
 	</array>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We use your location to show notifications.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We use your location to show notifications.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We use your location to show notifications.</string>
+	<string>Use current location to filter markers.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>We use your location to show notifications.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We use your location to show notifications.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to show notifications.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

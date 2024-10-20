@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:comp3330_project/models/facility_category.dart';
+import 'package:comp3330_project/providers/current_location.dart';
+import 'package:comp3330_project/providers/maps_filter.dart';
 import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class GoogleMaps extends StatefulWidget {
-  final VoidCallback onMarkerTap; // Callback for marker tap
+  final VoidCallback onMarkerTap;
 
   const GoogleMaps({super.key, required this.onMarkerTap});
 
@@ -56,9 +58,24 @@ class _GoogleMapsState extends State<GoogleMaps> {
         Provider.of<SelectedCategoryProvider>(context);
     FacilityType selectedCategory = selectedCategoryProvider.selectedCategory;
 
-    final filteredFacilities = facilities.where((facility) {
+    var filteredFacilities = facilities.where((facility) {
       return facility.category == selectedCategory;
     }).toList();
+
+    final isFiltered = Provider.of<MapsDistanceProvider>(context).isFiltered;
+    final currentLocationProvider =
+        Provider.of<CurrentLocationProvider>(context);
+
+    if (isFiltered && currentLocationProvider.currentLocation != null) {
+      filteredFacilities = filteredFacilities.where((f) {
+        final cord = f.coordinates;
+        final disInMeters = currentLocationProvider.computeDistanceInMeters(
+          cord.latitude,
+          cord.longitude,
+        );
+        return disInMeters <= 250;
+      }).toList();
+    }
 
     _markersMap.clear();
 

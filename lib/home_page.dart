@@ -2,6 +2,8 @@ import 'package:comp3330_project/alarm_setup_page.dart';
 import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:comp3330_project/favorite_page.dart';
 import 'package:comp3330_project/models/facility_category.dart';
+import 'package:comp3330_project/providers/current_location.dart';
+import 'package:comp3330_project/providers/maps_filter.dart';
 import 'package:comp3330_project/providers/selected_category.dart';
 import 'package:comp3330_project/providers/selected_facility.dart';
 import 'package:comp3330_project/widgets/filter_toggle_button.dart';
@@ -112,10 +114,26 @@ class _HomePageState extends State<HomePage>
 
     final selectedCategoryProvider =
         Provider.of<SelectedCategoryProvider>(context);
+
     FacilityType selectedCategory = selectedCategoryProvider.selectedCategory;
     var filteredFacilities = facilities.where((facility) {
       return facility.category == selectedCategory;
     }).toList();
+
+    final isFiltered = Provider.of<MapsDistanceProvider>(context).isFiltered;
+    final currentLocationProvider =
+        Provider.of<CurrentLocationProvider>(context);
+
+    if (isFiltered && currentLocationProvider.currentLocation != null) {
+      filteredFacilities = filteredFacilities.where((f) {
+        final cord = f.coordinates;
+        final disInMeters = currentLocationProvider.computeDistanceInMeters(
+          cord.latitude,
+          cord.longitude,
+        );
+        return disInMeters <= 250;
+      }).toList();
+    }
 
     return Scaffold(
       appBar: MainPageAppBar(
