@@ -1,4 +1,6 @@
+// ignore_for_file: avoid_print
 import 'package:background_fetch/background_fetch.dart';
+import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:comp3330_project/providers/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
@@ -9,9 +11,14 @@ class BackgroundFetchHandler {
   final AlarmScheduler _alarmScheduler;
   final SharedPreferencesProvider _sharedPreferencesProvider;
 
-  BackgroundFetchHandler(this._alarmScheduler, this._sharedPreferencesProvider);
+  BackgroundFetchHandler(
+    this._alarmScheduler,
+    this._sharedPreferencesProvider,
+  ) {
+    _initBackgroundFetch();
+  }
 
-  void initBackgroundFetch() {
+  void _initBackgroundFetch() {
     BackgroundFetch.configure(
       BackgroundFetchConfig(
         minimumFetchInterval: 15,
@@ -20,20 +27,26 @@ class BackgroundFetchHandler {
       ),
       _onBackgroundFetch,
     ).then((int status) {
-      // print("[BackgroundFetch] configure success: $status");
+      print("[BackgroundFetch] configure success: $status");
     }).catchError((e) {
-      // print("[BackgroundFetch] configure ERROR: $e");
+      print("[BackgroundFetch] configure ERROR: $e");
     });
+    print("Finish background fetch init.");
   }
 
   Future<void> _onBackgroundFetch(String taskId) async {
-    List<String> facilityIds = _sharedPreferencesProvider.facilityIds;
-    for (String facilityId in facilityIds) {
-      final location = getLocation('Asia/Taipei');
-      final nowInTaipei = TZDateTime.now(location);
+    print('fetch attempt on task $taskId');
+    final location = getLocation('Asia/Taipei');
+    final nowInTaipei = TZDateTime.now(location);
+    // if (nowInTaipei.weekday == DateTime.saturday ||
+    //     nowInTaipei.weekday == DateTime.sunday) return;
 
-      if (nowInTaipei.weekday == DateTime.saturday ||
-          nowInTaipei.weekday == DateTime.sunday) return;
+    List<String> facilityIds = _sharedPreferencesProvider.facilityIds;
+
+    for (String facilityId in facilityIds) {
+      // check occupancy %
+      var percentage = getOccupancy(facilityId);
+      if (percentage > 0.4) continue;
 
       var days = _sharedPreferencesProvider.getAlarmDays(facilityId);
       var daysInInt = days.map((d) => _weekdayToInt(d)).toList();
@@ -63,7 +76,7 @@ class BackgroundFetchHandler {
 
       if (nowInTaipei.isAfter(startDateTime) &&
           nowInTaipei.isAfter(endDateTime)) {
-        await _alarmScheduler.scheduleAlarm(facilityId);
+        await _alarmScheduler.showNotification(facilityId);
       }
     }
 

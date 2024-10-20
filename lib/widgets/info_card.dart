@@ -76,14 +76,16 @@ class _InfoCardState extends State<InfoCard> {
                     isLiked ? Icons.favorite : Icons.favorite_border,
                     color: isLiked ? Colors.red : Colors.grey,
                   ),
-                  onPressed: () => setState(() {
-                    isLiked = !isLiked;
-                    if (isLiked) {
-                      sharedPrefProvider.addFacilityId(widget.id);
-                    } else {
-                      sharedPrefProvider.removeFacilityId(widget.id);
-                    }
-                  }),
+                  onPressed: () {
+                    setState(() {
+                      isLiked = !isLiked;
+                      if (isLiked) {
+                        sharedPrefProvider.addFacilityId(widget.id);
+                      } else {
+                        sharedPrefProvider.removeFacilityId(widget.id);
+                      }
+                    });
+                  },
                 ),
               ],
             ),

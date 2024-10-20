@@ -1,54 +1,56 @@
+import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart';
-import 'package:timezone/timezone.dart';
 
 class AlarmScheduler {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   AlarmScheduler(this.flutterLocalNotificationsPlugin) {
     initializeTimeZones();
+    _initializeNotifications();
   }
 
-  Future<void> scheduleAlarm(
-    String facilityId,
-  ) async {
-    await _cancelAlarm(facilityId);
-    _scheduleDailyNotification(facilityId);
-  }
+  Future<void> _initializeNotifications() async {
+    const DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings();
 
-  Future<void> _scheduleDailyNotification(
-    String facilityId,
-  ) async {
-    final taipeiLocation = getLocation('Asia/Taipei');
-    final now = TZDateTime.now(taipeiLocation);
-
-    TZDateTime scheduledTime = TZDateTime(
-      taipeiLocation,
-      now.year,
-      now.month,
-      now.day,
-      now.hour,
-      now.minute,
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      iOS: initializationSettingsDarwin,
     );
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      facilityId.hashCode + now.weekday,
-      'Facility $facilityId',
-      'Facility $facilityId is now available under 40% occupancy!',
-      scheduledTime,
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse:
+          (NotificationResponse response) async {},
+    );
+
+    _requestPermissions(); // Call this here to request permissions
+  }
+
+  Future<void> showNotification(String facilityId) async {
+    final name = getName(facilityId);
+    await flutterLocalNotificationsPlugin.show(
+      facilityId.hashCode,
+      'Facility $name',
+      'Facility $name is now available under 40% occupancy!',
       const NotificationDetails(
         iOS: DarwinNotificationDetails(),
       ),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
   }
 
-  // clear all alarms before setting a new one
-  Future<void> _cancelAlarm(String facilityId) async {
-    for (int i = 1; i <= 5; i++) {
-      await flutterLocalNotificationsPlugin.cancel(facilityId.hashCode + i);
+  Future<void> _requestPermissions() async {
+    final bool? result = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+    if (result == false) {
+      print("Notification permission denied.");
     }
   }
 }

@@ -20,7 +20,7 @@ List<Facility> facilities = [
     location: "Composite Building",
     coordinates: const LatLng(22.283157, 114.158207),
     description: "Healthy vegan food available.",
-    occupancy: 20,
+    occupancy: 15,
     capacity: 50,
     category: FacilityType.food,
     bookingLink: "https://example.com/vegan-booking",
@@ -112,4 +112,15 @@ List<Facility> getFilteredList(FacilityType type) {
   return facilities.where((facility) {
     return facility.category == type;
   }).toList();
+}
+
+double getOccupancy(String id) {
+  var f = facilities.firstWhere((e) => e.id == id);
+  if (f.occupancy == null) return -1;
+  return f.occupancy! / f.capacity;
+}
+
+String getName(String id) {
+  var f = facilities.firstWhere((e) => e.id == id);
+  return f.name;
 }

@@ -36,8 +36,11 @@ class MyApp extends StatelessWidget {
     final sharedPrefProvider = Provider.of<SharedPreferencesProvider>(context);
     final alarmScheduler = AlarmScheduler(flutterLocalNotificationsPlugin);
 
-    final bgFetcher = BackgroundFetchHandler(alarmScheduler, sharedPrefProvider)
-        .initBackgroundFetch(); // ignore error
+    // ignore: unused_local_variable
+    final bgFetcher = BackgroundFetchHandler(
+      alarmScheduler,
+      sharedPrefProvider,
+    );
 
     return const MaterialApp(
       title: 'HKU Main Campus Capacity Tracker',
