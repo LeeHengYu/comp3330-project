@@ -18,6 +18,10 @@ class FavoritePage extends StatelessWidget {
     final favFacilities = facilities.where((f) {
       return favoriteIds.contains(f.id);
     }).toList();
+    favFacilities.sort(
+      (a, b) => ((a.occupancy ?? 1e9) / a.capacity)
+          .compareTo((b.occupancy ?? 1e9) / b.capacity),
+    );
 
     return Scaffold(
       appBar: AppBar(
