@@ -1,3 +1,3 @@
-# comp3330_project
+# COMP3330 GP: HKU Main campus capacity tracker
 
-Group project for COMP3330, 2024, sem 1.
+Run the project with `flutter run`.
