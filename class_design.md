@@ -9,37 +9,43 @@ classDiagram
         +int occupied
         +Url bookingLink
 
-        +Marker toMapsMarker()
+        +toMapsMarker() Marker
     }
 
+    note "Not implemented but to encapsulate basic info for a notification"
     class Alert {
         +String facilityId
         +List~int~ weekdays
-        +int startTime
-        +int endTime
+        +TimeOfDay startTime
+        +TimeOfDay endTime
     }
 
-    note for SharedPreferencesProvider "Manage favorite list"
+    note for SharedPreferencesProvider "Shared Preferences is an interface for file system storing insensitive data."
     class SharedPreferencesProvider {
+        -SharedPreferences _prefs
         +List~String~ facilityId
-        +TimeOfDay? getStartTime(String id)
-        +TimeOfDay? getEndTime(String id)
-        +List~String~ getAlarmDays(String id)
+        +getStartTime(String facilityId) TimeOfDay?
+        +getEndTime(String facilityId) TimeOfDay?
+        +getAlarmDays(String facilityId) List~String~
+        +clearFacilityIds() void
+        +setAlarmData(String idfacilityId, TimeOfDay? startTime, TimeOfDay? endTime, List~String~ days)
+        +getStartTime(String facilityId) TimeOfDay?
+        +getEndTime(String facilityId) TimeOfDay?
     }
 
     class AlarmScheduler {
-        + scheduleAlarm()
+        +showNotification(String id) void
     }
 
     class BackgroundFetcher {
         AlarmScheduler scheduler
         SharedPreferencesProvider prefsProvider
 
-        + initBgFetch()
+        +initBgFetch() void
     }
 
-    SharedPreferencesProvider .. Alert
-    SharedPreferencesProvider .. Facility
-    BackgroundFetcher *-- AlarmScheduler
-    BackgroundFetcher -- SharedPreferencesProvider
+    SharedPreferencesProvider ..> Alert
+    SharedPreferencesProvider ..> Facility
+    BackgroundFetcher ..> AlarmScheduler
+    BackgroundFetcher ..> SharedPreferencesProvider
 ```
