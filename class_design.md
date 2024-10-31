@@ -1,4 +1,7 @@
 ```mermaid
+---
+title: (unrigorous) class diagram
+---
 classDiagram
     note "Facility and Maps markers share common id."
     class Facility {
@@ -12,7 +15,7 @@ classDiagram
         +toMapsMarker() Marker
     }
 
-    note "Not implemented but to encapsulate basic info for a notification"
+    note for Alert "Not implemented but to encapsulate basic info of a notification when registering"
     class Alert {
         +String facilityId
         +List~int~ weekdays
