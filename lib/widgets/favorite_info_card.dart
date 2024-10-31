@@ -43,11 +43,14 @@ class FavInfoCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width * 0.7,
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(height: 4),

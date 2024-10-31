@@ -64,11 +64,14 @@ class _InfoCardState extends State<InfoCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width * 0.7,
+                  child: Text(
+                    widget.title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 IconButton(
