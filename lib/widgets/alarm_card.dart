@@ -1,4 +1,5 @@
 import 'package:comp3330_project/providers/shared_preferences.dart';
+import 'package:comp3330_project/service/alarm_scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -205,7 +206,12 @@ class _AlarmCardState extends State<AlarmCard> {
         Align(
           alignment: Alignment.centerLeft,
           child: InkWell(
-            onTap: _saveAlarm,
+            onTap: () {
+              _saveAlarm();
+              final scheduler =
+                  Provider.of<AlarmSchedulerNotifier>(context, listen: false);
+              scheduler.showNotification(widget.facilityId);
+            },
             borderRadius: BorderRadius.circular(8),
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
