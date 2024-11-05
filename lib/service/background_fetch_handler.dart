@@ -2,20 +2,22 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:comp3330_project/constants/sample_data.dart';
 import 'package:comp3330_project/providers/shared_preferences.dart';
+import 'package:comp3330_project/service/alarm_scheduler.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart';
 
-import 'alarm_scheduler.dart';
-
 class BackgroundFetchHandler {
-  final AlarmScheduler _alarmScheduler;
+  AlarmSchedulerNotifier? scheduler;
   final SharedPreferencesProvider _sharedPreferencesProvider;
+  final BuildContext context;
 
   BackgroundFetchHandler(
-    this._alarmScheduler,
     this._sharedPreferencesProvider,
+    this.context,
   ) {
     _initBackgroundFetch();
+    scheduler = Provider.of<AlarmSchedulerNotifier>(context, listen: false);
   }
 
   void _initBackgroundFetch() {
@@ -76,7 +78,7 @@ class BackgroundFetchHandler {
 
       if (nowInTaipei.isAfter(startDateTime) &&
           nowInTaipei.isAfter(endDateTime)) {
-        await _alarmScheduler.showNotification(facilityId);
+        await scheduler?.showNotification(facilityId);
       }
     }
 

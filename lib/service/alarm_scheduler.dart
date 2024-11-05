@@ -1,11 +1,12 @@
 import 'package:comp3330_project/constants/sample_data.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart';
 
-class AlarmScheduler {
+class AlarmSchedulerNotifier extends ChangeNotifier {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  AlarmScheduler(this.flutterLocalNotificationsPlugin) {
+  AlarmSchedulerNotifier(this.flutterLocalNotificationsPlugin) {
     initializeTimeZones();
     _initializeNotifications();
   }

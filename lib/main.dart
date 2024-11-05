@@ -11,17 +11,21 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CurrentLocationProvider()),
+        ChangeNotifierProvider(
+          create: (_) =>
+              AlarmSchedulerNotifier(flutterLocalNotificationsPlugin),
+        ),
         ChangeNotifierProvider(create: (_) => MapsDistanceProvider()),
         ChangeNotifierProvider(create: (_) => SelectedCategoryProvider()),
         ChangeNotifierProvider(create: (_) => SelectedFacilityProvider()),
@@ -38,13 +42,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sharedPrefProvider = Provider.of<SharedPreferencesProvider>(context);
-    final alarmScheduler = AlarmScheduler(flutterLocalNotificationsPlugin);
 
     // ignore: unused_local_variable
-    final bgFetcher = BackgroundFetchHandler(
-      alarmScheduler,
-      sharedPrefProvider,
-    );
+    final bgFetcher = BackgroundFetchHandler(sharedPrefProvider, context);
 
     return const MaterialApp(
       title: 'HKU Main Campus Capacity Tracker',
